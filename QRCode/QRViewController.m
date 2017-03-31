@@ -19,21 +19,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBarHidden = YES;
-
+    //背景框
     QRCodeBackgrondView *backgroundView = [[QRCodeBackgrondView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:backgroundView];
     
-    QRCodeAreaView *areaView = [[QRCodeAreaView alloc] initWithFrame:CGRectMake(0, 0, 205, 205)];
+    //扫描框：不代表扫描有效区域
+    QRCodeAreaView *areaView = [[QRCodeAreaView alloc] initWithFrame:CGRectMake(0, 0, 255, 255)];
     areaView.center = self.view.center;
     [self.view addSubview:areaView];
     self.areaView = areaView;
     
     //提示文字
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(areaView.frame) + 10, self.view.frame.size.width, 50)];
-    label.text = @"将条形码放入框内，即开始扫描";
+    label.text = @"将条形码、二维码放入框内，即开始扫描";
     label.textColor = [UIColor whiteColor];
     [label sizeToFit];
     label.center = CGPointMake(self.view.frame.size.width/2, label.center.y);
@@ -57,6 +57,7 @@
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     CGFloat height = [UIScreen mainScreen].bounds.size.height;
     
+    //设置有效的扫描区域
     output.rectOfInterest = CGRectMake(areaView.frame.origin.y / height, areaView.frame.origin.x / width, areaView.frame.size.height / height, areaView.frame.size.width / width);
     
     self.session = [[AVCaptureSession alloc] init];
@@ -64,14 +65,12 @@
     [self.session addInput:input];
     [self.session addOutput:output];
     
-    output.metadataObjectTypes = @[AVMetadataObjectTypeCode39Code];
-    
+    //设置扫码支持的编码格式(如下设置条形码和二维码兼容)
+    output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode,AVMetadataObjectTypeCode39Code,AVMetadataObjectTypeEAN13Code,AVMetadataObjectTypeEAN8Code,AVMetadataObjectTypeCode128Code];
     AVCaptureVideoPreviewLayer *layer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     layer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     layer.frame = self.view.layer.bounds;
-    
     [self.view.layer insertSublayer:layer atIndex:0];
-    
     [self.session startRunning];
 }
 
@@ -88,10 +87,6 @@
         self.updateBlock(metadataObject.stringValue);
         [self.navigationController popViewControllerAnimated:YES];
     }
-}
-
-- (void)dealloc {
-    NSLog(@"123");
 }
 
 

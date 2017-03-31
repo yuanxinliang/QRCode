@@ -16,7 +16,8 @@
     
     CGFloat width = [[UIScreen mainScreen] bounds].size.width;
     CGFloat height = [[UIScreen mainScreen] bounds].size.height;
-    CGRect frame = CGRectMake((width - 200)/2, (height - 200)/2, 200, 200);
+    //设置白色框的Frame
+    CGRect frame = CGRectMake((width - 250)/2, (height - 250)/2, 250, 250);
     CGContextRef context = UIGraphicsGetCurrentContext();
     //填充区域颜色
     [[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5] set];
@@ -31,8 +32,6 @@
     
     CGRect bottomScanRect = CGRectMake(0, CGRectGetMaxY(frame), self.frame.size.width, self.frame.size.height);
     CGContextFillRect(context, bottomScanRect);
-    
-    
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
